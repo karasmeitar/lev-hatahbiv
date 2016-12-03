@@ -1,0 +1,13 @@
+{
+	"port" : 5000,
+	"api" : {
+		"host" : "api.sandbox.paypal.com",
+		"port" : "",
+		"client_id" : "?",
+		"client_secret" : "?"
+	},
+  "fireBase":{
+	"databaseURL": "https://lev-hatahbiv.firebaseio.com/store-items",
+	"serviceAccount": "myapp-13ad200fc320.json"
+  }
+}
