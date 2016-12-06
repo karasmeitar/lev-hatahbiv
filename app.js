@@ -21,7 +21,7 @@ try {
     process.exit(1);
 }
 routes.init(config);
-//products.init(config);
+products.init(config);
 
 app.set('port', process.env.PORT || 3000);
 app.use(bodyParser.urlencoded({

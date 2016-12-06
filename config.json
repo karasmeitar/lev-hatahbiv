@@ -3,11 +3,17 @@
 	"api" : {
 		"host" : "api.sandbox.paypal.com",
 		"port" : "",
-		"client_id" : "?",
-		"client_secret" : "?"
+		"client_id" : "AbThKazmNAjJo2TaX-w1k62Dgo7xe82y3I889b2LSQIFw3C37K6F1D4bUSF1rCNzkbBRtnPcuXA-M41R",
+		"client_secret" : "EN39klNnL_n4fSmh3XMqpaGNw1byg9Ub9XWXZrOEkbweENIi4q6-kk-VG2nfIcf4n13FaK6Y-YzZYPVB"
 	},
   "fireBase":{
 	"databaseURL": "https://lev-hatahbiv.firebaseio.com/store-items",
-	"serviceAccount": "myapp-13ad200fc320.json"
+	"config":	{
+	  "apiKey": "AIzaSyCznBUpwG1M6reFBOBbuuTW92nK1GYHyaw",
+	  "authDomain": "lev-hatahbiv.firebaseapp.com",
+	  "databaseURL": "https://lev-hatahbiv.firebaseio.com",
+	  "storageBucket": "lev-hatahbiv.appspot.com",
+	  "messagingSenderId": "844153889834"
+	}
   }
 }

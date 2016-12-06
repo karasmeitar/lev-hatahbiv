@@ -2,6 +2,7 @@
 
 var paypal = require('paypal-rest-sdk');
 var productsDb = require('../models/productsDb')
+var _ = require('underscore');
 var config = {};
 
 // Routes
@@ -15,14 +16,25 @@ exports.purchase = function (req, res) {
 	var products = req.body.products;
 	var sum = 0;
 
-	for(var i=0; i < products.length; i++)
-	{
-		var price = productsDb.getProductPriceById(products[i].product_id);
-		if(products[i].ammount > 0) {
-			sum += price * products[i].ammount;
-		}
-	}
 
+	productsDb.getProductPriceByIds(products, function (itemrows) {
+
+		var sum=0;
+		for(var index=0;index < products.length;index++){
+				var currdbProduct = _.findWhere(itemrows[0],{id: products[index].product_id});
+				if(currdbProduct){
+					sum+= products[index].amount * currdbProduct.price;
+				}
+
+			}
+
+		createPaypalPayment(200,sum);
+	});
+
+
+}
+
+function createPaypalPayment(sum){
 	var payment = {
 		"intent": "sale",
 		"payer": {
@@ -77,7 +89,7 @@ exports.purchase = function (req, res) {
 			res.redirect(redirectUrl);
 		}
 	});
-};
+}
 
 exports.execute = function (req, res) {
 	var paymentId = req.session.paymentId;
