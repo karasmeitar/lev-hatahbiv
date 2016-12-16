@@ -1,6 +1,6 @@
 var express = require('express');
 var routes = require('./routes');
-var products = require('./models/productsDb');
+var products = require('./models/fireBaseDB');
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
@@ -22,25 +22,34 @@ try {
 }
 routes.init(config);
 products.init(config);
-
-app.set('port', process.env.PORT || 3000);
+app.set('view engine', 'jade');
+app.set('port', 3000);
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', '*');
+    res.header('Access-Control-Allow-Headers', '*');
+
+    next();
+}
+
 app.use(bodyParser.json());
 app.use(methodOverride('X-HTTP-Method-Override'))
 app.use(cookieParser());
 app.use(session({
     secret: 'gilTheKing',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
 }));
 
 if ('development' == app.get('env')) {
     app.use(errorhandler());
 }
 
-app.get('/', routes.index);
+
 app.post('/purchase', routes.purchase);
 app.get('/execute', routes.execute);
 app.get('/cancel', routes.cancel);

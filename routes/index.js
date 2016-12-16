@@ -1,15 +1,13 @@
 'use strict';
 
 var paypal = require('paypal-rest-sdk');
-var productsDb = require('../models/productsDb')
+var productsDb = require('../models/fireBaseDB')
 var _ = require('underscore');
 var config = {};
+var logger = require('./../logger');
 
 // Routes
 
-exports.index = function (req, res) {
-  res.render('index');
-};
 
 exports.purchase = function (req, res) {
 	var method = req.body.method;
@@ -21,20 +19,20 @@ exports.purchase = function (req, res) {
 
 		var sum=0;
 		for(var index=0;index < products.length;index++){
-				var currdbProduct = _.findWhere(itemrows[0],{id: products[index].product_id});
+				var currdbProduct = _.findWhere(itemrows[0],{id:parseInt(products[index].product_id)});
 				if(currdbProduct){
 					sum+= products[index].amount * currdbProduct.price;
 				}
 
-			}
-
-		createPaypalPayment(200,sum);
+		}
+//		sum =3;
+		createPaypalPayment(method,sum,req,res);
 	});
 
 
 }
 
-function createPaypalPayment(sum){
+function createPaypalPayment(method,sum,req,res){
 	var payment = {
 		"intent": "sale",
 		"payer": {
@@ -44,15 +42,15 @@ function createPaypalPayment(sum){
 				"currency": 'ILS',
 				"total": sum
 			},
-			"description": req.param('description')
+			"description": 'test'
 		}]
 	};
 
 	if (method === 'paypal') {
 		payment.payer.payment_method = 'paypal';
 		payment.redirect_urls = {
-			"return_url": "http://*/execute",
-			"cancel_url": "http://*/cancel"
+			"return_url": "http://d3fee465.ngrok.io/execute",
+			"cancel_url": "http://d3fee465.ngrok.io/cancel"
 		};
 	} else if (method === 'credit_card') {
 		var funding_instruments = [
@@ -76,7 +74,7 @@ function createPaypalPayment(sum){
 			console.log(error);
 			res.send({ 'error': error });
 		} else {
-
+			logger.info(JSON.stringify(payment));
 			var redirectUrl;
 			for(var i=0; i < payment.links.length; i++) {
 				var link = payment.links[i];
@@ -85,8 +83,25 @@ function createPaypalPayment(sum){
 				}
 			}
 
-			req.session.paymentId = payment.id;
-			res.redirect(redirectUrl);
+			//res.redirect(redirectUrl);
+			var url = redirectUrl;
+			productsDb.saveOrder(req.body.user_data,req.body.products,sum,0,payment.id,function(status){
+				if(status === 'ok'){
+
+					//res.cookie('paypal', payment.id, { expires: new Date() - 1, httpOnly: false });
+					req.session.paymentId = payment.id;
+					req.session.userData = req.body.user_data;
+					req.session.products = req.body.products;
+					logger.info('Created Purchase for product: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.userData));
+					res.status(200,redirectUrl);
+					//res.redirect(redirectUrl);
+				}
+				else{
+					logger.error('Error in saving order in DB : '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.userData));
+					res.status(500).send("Error in saving order in firebase");
+				}
+			});
+
 		}
 	});
 }
@@ -94,14 +109,23 @@ function createPaypalPayment(sum){
 exports.execute = function (req, res) {
 	var paymentId = req.session.paymentId;
 	var payerId = req.param('PayerID');
+	var userData = req.session.userData;
+	var products =req.session.products;
 
 	var details = { "payer_id": payerId };
 	var payment = paypal.payment.execute(paymentId, details, function (error, payment) {
 		if (error) {
-			console.log(error);
-			res.render('error', { 'error': error });
+			logger.error('Error for Creating Purchase for products: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.user_data) + ' Error: '+JSON.stringify(Error));
 		} else {
-			res.render('execute', { 'payment': payment });
+			productsDb.updateOrderStatus(paymentId,1,function(status){
+				if(status === 'ok'){
+					res.render('execute', { 'payment': payment });
+				}
+				else{
+					res.status(500,'Error in saving order in DB');
+				}
+			});
+
 		}
 	});
 };

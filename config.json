@@ -1,5 +1,6 @@
 {
 	"port" : 5000,
+  	"log_path":"C:\\logs\\",
 	"api" : {
 		"host" : "api.sandbox.paypal.com",
 		"port" : "",
