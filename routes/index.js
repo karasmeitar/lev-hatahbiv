@@ -49,8 +49,8 @@ function createPaypalPayment(method,sum,req,res){
 	if (method === 'paypal') {
 		payment.payer.payment_method = 'paypal';
 		payment.redirect_urls = {
-			"return_url": "http://d3fee465.ngrok.io/execute",
-			"cancel_url": "http://d3fee465.ngrok.io/cancel"
+			"return_url": "https://lev-hatahbiv.herokuapp.com/execute",
+			"cancel_url": "https://lev-hatahbiv.herokuapp.com/cancel"
 		};
 	} else if (method === 'credit_card') {
 		var funding_instruments = [
