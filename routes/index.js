@@ -93,7 +93,7 @@ function createPaypalPayment(method,sum,req,res){
 					req.session.userData = req.body.user_data;
 					req.session.products = req.body.products;
 					logger.info('Created Purchase for product: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.userData));
-					res.status(200,redirectUrl);
+					res.status(200).send(redirectUrl);
 					//res.redirect(redirectUrl);
 				}
 				else{
@@ -122,7 +122,7 @@ exports.execute = function (req, res) {
 					res.render('execute', { 'payment': payment });
 				}
 				else{
-					res.status(500,'Error in saving order in DB');
+					res.status(500).send('Error in saving order in DB');
 				}
 			});
 
