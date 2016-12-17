@@ -7,7 +7,7 @@ var fs = require('fs');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var methodOverride = require('method-override');
-var session = require('express-session');
+var cookieSession = require('cookie-session');
 var errorhandler = require('errorhandler');
 var router = express.Router();
 
@@ -39,10 +39,13 @@ var allowCrossDomain = function(req, res, next) {
 app.use(bodyParser.json());
 app.use(methodOverride('X-HTTP-Method-Override'))
 app.use(cookieParser());
-app.use(session({
-    secret: 'gilTheKing',
-    resave: false,
-    saveUninitialized: true,
+app.use(cookieSession({
+    name:"lev",
+    httpOnly:true,
+    maxAge:1000*60*5,
+    secure:true,
+    keys: ['gilTheKing','gil123'],
+    resave: true,
 }));
 
 if ('development' == app.get('env')) {

@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "cookie-session":"2.0.0-alpha.2",
     "async":"2.1.4",
     "lodash":"4.17.2",
     "firebase":"3.6.2",
