@@ -23,7 +23,7 @@ try {
 routes.init(config);
 products.init(config);
 app.set('view engine', 'jade');
-app.set('port', 80);
+app.set('port', process.env.PORT || 3000);
 app.use(bodyParser.urlencoded({
     extended: true
 }));
