@@ -36,6 +36,7 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 
+app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use(methodOverride('X-HTTP-Method-Override'))
 app.use(cookieParser());
