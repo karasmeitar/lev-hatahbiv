@@ -7,7 +7,6 @@ var fs = require('fs');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var methodOverride = require('method-override');
-var cookieSession = require('cookie-session');
 var errorhandler = require('errorhandler');
 var router = express.Router();
 
@@ -28,6 +27,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+app.use(bodyParser.json());
+
 var allowCrossDomain = function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -44,21 +45,28 @@ var allowCrossDomain = function(req, res, next) {
 }
 
 app.use(allowCrossDomain);
-app.use(bodyParser.json());
 app.use(methodOverride('X-HTTP-Method-Override'))
 app.use(cookieParser());
-app.use(cookieSession({
-    name:"lev",
-    httpOnly:true,
-    maxAge:1000*60*5,
-    secure:true,
-    keys: ['gilTheKing','gil123'],
-    resave: true,
-}));
-
 if ('development' == app.get('env')) {
     app.use(errorhandler());
 }
+
+app.use(function (req, res, next) {
+    // check if client sent cookie
+    var cookie = req.cookies.lev;
+    if (cookie === undefined)
+    {
+        // no: set a new cookie
+
+        res.cookie('lev',{}, { maxAge: 900000, httpOnly: true });
+        console.log('cookie created successfully');
+    }
+    else
+    {
+        console.log('cookie exists', cookie);
+    }
+    next();
+});
 
 
 app.post('/purchase', routes.purchase);

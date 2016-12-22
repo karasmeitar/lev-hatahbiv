@@ -89,12 +89,8 @@ function createPaypalPayment(method,sum,req,res){
 				if(status === 'ok'){
 
 					//res.cookie('paypal', payment.id, { expires: new Date() - 1, httpOnly: false });
-					req.session.paymentId = payment.id;
-					req.session.userData = req.body.user_data;
-					req.session.products = req.body.products;
-					logger.info('Created Purchase for product: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.userData));
-					res.status(200).send(redirectUrl);
-					//res.redirect(redirectUrl);
+					res.cookie("lev",{'paymentId':payment.id});
+					res.send(redirectUrl);
 				}
 				else{
 					logger.error('Error in saving order in DB : '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.userData));
@@ -107,15 +103,13 @@ function createPaypalPayment(method,sum,req,res){
 }
 
 exports.execute = function (req, res) {
-	var paymentId = req.session.paymentId;
+	var paymentId = req.cookies.lev.paymentId;
 	var payerId = req.param('PayerID');
-	var userData = req.session.userData;
-	var products =req.session.products;
 
 	var details = { "payer_id": payerId };
 	var payment = paypal.payment.execute(paymentId, details, function (error, payment) {
 		if (error) {
-			logger.error('Error for Creating Purchase for products: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.user_data) + ' Error: '+JSON.stringify(Error));
+			//logger.error('Error for Creating Purchase for products: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.user_data) + ' Error: '+JSON.stringify(Error));
 		} else {
 			productsDb.updateOrderStatus(paymentId,1,function(status){
 				if(status === 'ok'){
