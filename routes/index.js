@@ -89,7 +89,9 @@ function createPaypalPayment(method,sum,req,res){
 				if(status === 'ok'){
 
 					//res.cookie('paypal', payment.id, { expires: new Date() - 1, httpOnly: false });
-					res.cookie("lev",{'paymentId':payment.id});
+					//res.cookies("lev",{'paymentId':payment.id});
+					console.log('cookie created successfully' + payment.id);
+					res.cookie("lev",{'paymentId':payment.id},'');
 					res.send(redirectUrl);
 				}
 				else{
