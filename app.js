@@ -5,10 +5,11 @@ var http = require('http');
 var path = require('path');
 var fs = require('fs');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var methodOverride = require('method-override');
 var errorhandler = require('errorhandler');
 var router = express.Router();
-;
+
 
 var app = express();
 try {
@@ -45,7 +46,7 @@ var allowCrossDomain = function(req, res, next) {
 
 app.use(allowCrossDomain);
 app.use(methodOverride('X-HTTP-Method-Override'))
-app.use(express.cookieParser())
+app.use(cookieParser());
 if ('development' == app.get('env')) {
     app.use(errorhandler());
 }
@@ -53,19 +54,19 @@ if ('development' == app.get('env')) {
 app.use(function (req, res, next) {
     // check if client sent cookie
     var cookie = req.cookies.lev;
-    console.log(JSON.stringify(req.cookies));
+    console.log(JSON.stringify(cookie));
 
-    if (cookie === undefined)
-    {
-        // no: set a new cookie
-
-        res.cookie('lev', {}, { maxAge: 900000, httpOnly: true });
-        console.log('cookie created successfully');
-    }
-    else
-    {
-        console.log('cookie exists', cookie);
-    }
+    //if (cookie === undefined)
+    //{
+    //    // no: set a new cookie
+    //
+    //    res.cookie('lev',{}, { maxAge: 900000, httpOnly: true });
+    //    console.log('cookie created successfully');
+    //}
+    //else
+    //{
+    //    console.log('cookie exists', cookie);
+    //}
     next();
 });
 
