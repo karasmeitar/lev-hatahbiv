@@ -89,8 +89,8 @@ function createPaypalPayment(method,sum,req,res){
 				if(status === 'ok'){
 
 					//res.cookie('paypal', payment.id, { expires: new Date() - 1, httpOnly: false });
-
-					res.cookie("lev",{'paymentId':payment.id},{ maxAge: 900000, httpOnly: true });
+					console.log(('created'));
+					res.cookie("lev",{'paymentId':payment.id},{ maxAge: 900000, httpOnly: false });
 					res.send(redirectUrl);
 				}
 				else{
@@ -104,6 +104,7 @@ function createPaypalPayment(method,sum,req,res){
 }
 
 exports.execute = function (req, res) {
+	console.log(JSON.stringify(res.cookies))
 	var paymentId = req.cookies.lev.paymentId;
 	var payerId = req.param('PayerID');
 
