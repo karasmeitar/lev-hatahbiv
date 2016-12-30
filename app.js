@@ -54,11 +54,13 @@ if ('development' == app.get('env')) {
 app.use(function (req, res, next) {
     // check if client sent cookie
     var cookie = req.cookies.lev;
+    console.log(JSON.stringify(req.cookies));
+
     if (cookie === undefined)
     {
         // no: set a new cookie
 
-        res.cookie('lev',{}, { maxAge: 900000, httpOnly: true });
+        res.cookie('lev',{}, { maxAge: 900000});
         console.log('cookie created successfully');
     }
     else
