@@ -5,6 +5,7 @@ var productsDb = require('../models/fireBaseDB')
 var _ = require('underscore');
 var config = {};
 var logger = require('./../logger');
+var Cookies = require( "cookies" )
 
 // Routes
 
@@ -91,7 +92,8 @@ function createPaypalPayment(method,sum,req,res){
 					//res.cookie('paypal', payment.id, { expires: new Date() - 1, httpOnly: false });
 					//res.cookies("lev",{'paymentId':payment.id});
 					console.log('cookie created successfully' + payment.id);
-					res.cookie("lev",{'paymentId':payment.id},'');
+
+					res.cookie('lev', {'paymentId':payment.id}, { maxAge: 900000, httpOnly: true });
 					res.send(redirectUrl);
 				}
 				else{
