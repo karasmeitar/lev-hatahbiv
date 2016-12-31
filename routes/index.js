@@ -25,7 +25,6 @@ exports.purchase = function (req, res) {
 				}
 
 		}
-//		sum =3;
 		createPaypalPayment(method,sum,req,res);
 	});
 
@@ -83,12 +82,9 @@ function createPaypalPayment(method,sum,req,res){
 				}
 			}
 
-
 			var url = redirectUrl;
 			productsDb.saveOrder(req.body.user_data,req.body.products,sum,0,payment.id,function(status){
 				if(status === 'ok'){
-					console.log(('created'));
-					//res.cookie("lev1",{'paymentId':payment.id},{ maxAge: 900000, httpOnly: false });
 					res.send(redirectUrl);
 				}
 				else{
@@ -102,22 +98,22 @@ function createPaypalPayment(method,sum,req,res){
 }
 
 exports.execute = function (req, res) {
-	console.log(JSON.stringify(res.cookies))
 	var paymentId = req.param('paymentId');
 	var payerId = req.param('PayerID');
 	var details = { "payer_id": payerId };
-	console.log(1);
 	var payment = paypal.payment.execute(paymentId, details, function (error, payment) {
 		if (error) {
-			//logger.error('Error for Creating Purchase for products: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.user_data) + ' Error: '+JSON.stringify(Error));
-			console.log('Error for Creating Purchase for products: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.user_data) + ' Error: '+JSON.stringify(Error));
+			logger.error('Error for Creating Purchase for paymentId: ' + paymentId);
+			console.log('Error for Creating Purchase for paymentId: ' + paymentId);
 		} else {
 			productsDb.updateOrderStatus(paymentId,1,function(status){
 				if(status === 'ok'){
-					res.render('execute', { 'payment': payment });
+					logger.info('Purchase Executed for paymentId: ' + paymentId);
+					console.log('Purchase Executed for paymentId: ' + paymentId);
+					res.redirect('https://lev-hatahbiv.firebaseapp.com?purchase=true');
 				}
 				else{
-					res.status(500).send('Error in saving order in DB');
+					res.redirect('https://lev-hatahbiv.firebaseapp.com?purchase=error');
 				}
 			});
 
@@ -126,7 +122,7 @@ exports.execute = function (req, res) {
 };
 
 exports.cancel = function (req, res) {
-  res.render('cancel');
+	res.redirect('https://lev-hatahbiv.firebaseapp.com?purchase=canceled');
 };
 
 // Configuration
