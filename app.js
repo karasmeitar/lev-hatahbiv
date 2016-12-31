@@ -51,28 +51,28 @@ if ('development' == app.get('env')) {
     app.use(errorhandler());
 }
 
-app.use(function (req, res, next) {
-    // check if client sent cookie
-    var cookie = req.cookies.lev1;
-    console.log(JSON.stringify(cookie));
-
-    //if (cookie === undefined)
-    //{
-    //    // no: set a new cookie
-    //
-    //    res.cookie('lev',{}, { maxAge: 900000, httpOnly: true });
-    //    console.log('cookie created successfully');
-    //}
-    //else
-    //{
-    //    console.log('cookie exists', cookie);
-    //}
-    next();
-});
+//app.use(function (req, res, next) {
+//    // check if client sent cookie
+//    var cookie = req.cookies.lev1;
+//    console.log(JSON.stringify(cookie));
+//
+//    //if (cookie === undefined)
+//    //{
+//    //    // no: set a new cookie
+//    //
+//    //    res.cookie('lev',{}, { maxAge: 900000, httpOnly: true });
+//    //    console.log('cookie created successfully');
+//    //}
+//    //else
+//    //{
+//    //    console.log('cookie exists', cookie);
+//    //}
+//    next();
+//});
 
 
 app.post('/purchase', routes.purchase);
-app.post('/execute', routes.execute);
+app.get('/execute', routes.execute);
 app.get('/cancel', routes.cancel);
 
 http.createServer(app).listen(app.get('port'), function(){

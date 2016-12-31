@@ -88,7 +88,7 @@ function createPaypalPayment(method,sum,req,res){
 			productsDb.saveOrder(req.body.user_data,req.body.products,sum,0,payment.id,function(status){
 				if(status === 'ok'){
 					console.log(('created'));
-					res.cookie("lev1",{'paymentId':payment.id},{ maxAge: 900000, httpOnly: false });
+					//res.cookie("lev1",{'paymentId':payment.id},{ maxAge: 900000, httpOnly: false });
 					res.send(redirectUrl);
 				}
 				else{
