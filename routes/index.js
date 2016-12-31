@@ -83,14 +83,12 @@ function createPaypalPayment(method,sum,req,res){
 				}
 			}
 
-			//res.redirect(redirectUrl);
+
 			var url = redirectUrl;
 			productsDb.saveOrder(req.body.user_data,req.body.products,sum,0,payment.id,function(status){
 				if(status === 'ok'){
-
-					//res.cookie('paypal', payment.id, { expires: new Date() - 1, httpOnly: false });
 					console.log(('created'));
-					res.cookie("lev",{'paymentId':payment.id},{ maxAge: 900000, httpOnly: false });
+					res.cookie("lev1",{'paymentId':payment.id},{ maxAge: 900000, httpOnly: false });
 					res.send(redirectUrl);
 				}
 				else{
@@ -105,13 +103,14 @@ function createPaypalPayment(method,sum,req,res){
 
 exports.execute = function (req, res) {
 	console.log(JSON.stringify(res.cookies))
-	var paymentId = req.cookies.lev.paymentId;
+	var paymentId = req.param('paymentId');
 	var payerId = req.param('PayerID');
-
 	var details = { "payer_id": payerId };
+	console.log(1);
 	var payment = paypal.payment.execute(paymentId, details, function (error, payment) {
 		if (error) {
 			//logger.error('Error for Creating Purchase for products: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.user_data) + ' Error: '+JSON.stringify(Error));
+			console.log('Error for Creating Purchase for products: '+JSON.stringify(req.session.products)+' for user: '+JSON.stringify(req.session.user_data) + ' Error: '+JSON.stringify(Error));
 		} else {
 			productsDb.updateOrderStatus(paymentId,1,function(status){
 				if(status === 'ok'){

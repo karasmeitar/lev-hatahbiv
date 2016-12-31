@@ -53,7 +53,7 @@ if ('development' == app.get('env')) {
 
 app.use(function (req, res, next) {
     // check if client sent cookie
-    var cookie = req.cookies.lev;
+    var cookie = req.cookies.lev1;
     console.log(JSON.stringify(cookie));
 
     //if (cookie === undefined)
@@ -72,7 +72,7 @@ app.use(function (req, res, next) {
 
 
 app.post('/purchase', routes.purchase);
-app.get('/execute', routes.execute);
+app.post('/execute', routes.execute);
 app.get('/cancel', routes.cancel);
 
 http.createServer(app).listen(app.get('port'), function(){
