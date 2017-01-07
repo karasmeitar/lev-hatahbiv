@@ -53,7 +53,7 @@ exports.init = function (c) {
 };
 
 exports.updateOrderStatus = function writeUserData(payment_id,status,callback) {
-    firebase.database().ref('orders/'+payment_id).set({
+    firebase.database().ref('orders/'+payment_id).update({
         status: status,
         }).then(function () {
         callback('ok');
